@@ -27,4 +27,12 @@ Necesitas tener Node.js y npm instalados en tu máquina. Además, es necesario q
 
 1. Clona este repositorio en tu servidor:
    ```bash
-   git clone <https://github.com/LuisLuna810/GHWHHandler>
+   git clone <https://github.com/LuisLuna810/GHWHHandler>```
+
+2. Instala las dependencias necesarias:
+      ```bash
+   npm install```
+
+3. Configura las variables de entorno necesarias en un archivo .env:
+   ```bash
+   REPOSITORIOS=/path/to/your/repositories```
