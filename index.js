@@ -1,7 +1,8 @@
-const http = require('http');
-const app = require('./src/app.js');
+import http from 'http';
+import app from './src/app.js';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 const port = process.env.PORT || 4000;
 
@@ -9,4 +10,4 @@ const httpServer = http.createServer(app);
 
 httpServer.listen(port, () => {
   console.log(`Server listening at ${port}`);
-})
+});

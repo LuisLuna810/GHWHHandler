@@ -1,13 +1,11 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const morgan = require("morgan");
-const routes = require('./routes/index.js');
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import morgan from "morgan";
+import routes from './routes/index.js';
 
 const { CORS_DOMAIN, DASHBOARD_DOMAIN } = process.env;
 const server = express();
-
-server.name = "BACK";
 
 const whiteList = [CORS_DOMAIN, DASHBOARD_DOMAIN];
 
@@ -25,4 +23,4 @@ server.use((err, req, res, next) => {
   res.status(status).send(message);
 });
 
-module.exports = server;
+export default server;

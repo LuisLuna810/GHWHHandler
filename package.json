@@ -3,8 +3,9 @@
  "version": "1.0.0",
  "description": "GitHub WebHook Handler",
  "main": "index.js",
+ "type": "module",
  "scripts": {
-  "start": "nodemon --exec babel-node",
+  "start": "nodemon -L",
   "test": "echo \"Error: no test specified\" && exit 1"
  },
  "author": "",
@@ -21,12 +22,5 @@
   "octokit": "^4.0.2",
   "pm2": "^5.4.2",
   "simple-git": "^3.24.0"
- },
- "devDependencies": {
-  "@babel/cli": "^7.25.7",
-  "@babel/core": "^7.25.8",
-  "@babel/node": "^7.25.7",
-  "@babel/preset-env": "^7.25.8",
-  "@babel/register": "^7.25.7"
  }
 }

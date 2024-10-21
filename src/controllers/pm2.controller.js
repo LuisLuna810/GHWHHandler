@@ -1,4 +1,4 @@
-const pm2 = require('pm2');
+import pm2 from 'pm2';
 
 // Función para listar los procesos de PM2
 function listProcesses(req, res) {
@@ -79,7 +79,7 @@ function checkProcessHealth(req, res) {
   });
 }
 
-module.exports = {
+export {
   listProcesses,
   getProcessStatus,
   checkProcessHealth,

@@ -1,11 +1,14 @@
-require('dotenv').config({ path: './.env' });
-const { REPOSITORIOS, GITHUB_TOKEN, REPO_OWNER, BACK_DOMAIN } = process.env;
+import dotenv from 'dotenv';
+dotenv.config({ path: './.env' });
+
 import { Octokit } from "octokit";
+import fs from 'fs';
+import path from 'path';
+import simpleGit from 'simple-git';
+import { exec } from 'child_process';
+
+const { REPOSITORIOS, GITHUB_TOKEN, REPO_OWNER, BACK_DOMAIN } = process.env;
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
-const fs = require('fs');
-const path = require('path');
-const simpleGit = require('simple-git');
-const { exec } = require('child_process');
 
 async function setGitHubStatus(repoName, sha, state, description) {
   try {
@@ -120,6 +123,6 @@ async function webHookHandler(req, res) {
   }
 }
 
-module.exports = {
+export {
   webHookHandler,
 };

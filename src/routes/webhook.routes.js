@@ -1,8 +1,8 @@
-const { Router } = require("express");
+import { Router } from "express";
+import {webHookHandler} from '../controllers/webhook.controller.js';
+
 const router = Router();
-const webHookController = require("../controllers/webhook.controller");
 
-router.post("/webhook", webHookController.webHookHandler);
+router.post("/webhook", webHookHandler);
 
-
-module.exports = router;
+export default router;

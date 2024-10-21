@@ -1,9 +1,10 @@
-const { Router } = require("express");
+import { Router } from "express";
+import webhook_routes from "./webhook.routes.js";
+import pm2_routes from "./pm2.routes.js";
+
 const router = Router();
-const webhook_routes = require("./webhook.routes.js");
-const pm2_routes = require("./pm2.routes.js");
 
-router.use('/', webhook_routes)
-router.use('/pm2', pm2_routes)
+router.use('/', webhook_routes);
+router.use('/pm2', pm2_routes);
 
-module.exports = router;
+export default router;

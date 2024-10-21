@@ -1,14 +1,16 @@
-const express = require('express');
+import express from 'express';
+import { listProcesses, getProcessStatus, checkProcessHealth } from '../controllers/pm2.controller.js';
+
+
 const router = express.Router();
-const pm2Controller = require('../controllers/pm2.controller');
 
 // Ruta para listar todos los procesos de PM2
-router.get('/processes', pm2Controller.listProcesses);
+router.get('/processes', listProcesses);
 
 // Ruta para obtener el estado de un proceso específico por nombre
-router.get('/process/:name', pm2Controller.getProcessStatus);
+router.get('/process/:name', getProcessStatus);
 
 // Ruta para verificar la salud de un proceso específico
-router.get('/process/:name/health', pm2Controller.checkProcessHealth);
+router.get('/process/:name/health', checkProcessHealth);
 
-module.exports = router;
+export default router;
