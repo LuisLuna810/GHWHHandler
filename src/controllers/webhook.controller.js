@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
-import { Octokit } from "@octokit/rest";
+import { Octokit } from "@octokit/core";
 import fs from 'fs';
 import path from 'path';
 import simpleGit from 'simple-git';
@@ -12,7 +12,7 @@ const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 async function setGitHubStatus(repoName, sha, state, description) {
   try {
-    await octokit.repos.createCommitStatus({
+    await octokit.request('POST /repos/{owner}/{repo}/statuses/{sha}',{
       owner: REPO_OWNER,
       repo: repoName,
       sha: sha,
