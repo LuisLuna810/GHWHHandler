@@ -1,6 +1,6 @@
 require('dotenv').config({ path: './.env' });
 const { REPOSITORIOS, GITHUB_TOKEN, REPO_OWNER, BACK_DOMAIN } = process.env;
-const { Octokit } = require('@octokit/rest');
+import { Octokit } from "octokit";
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 const fs = require('fs');
 const path = require('path');
