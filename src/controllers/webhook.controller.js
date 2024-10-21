@@ -9,7 +9,6 @@ import { exec } from 'child_process';
 
 const { REPOSITORIOS, GITHUB_TOKEN, REPO_OWNER, BACK_DOMAIN } = process.env;
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
-
 async function setGitHubStatus(repoName, sha, state, description) {
   try {
     await octokit.request('POST /repos/{owner}/{repo}/statuses/{sha}',{
@@ -46,7 +45,7 @@ async function webHookHandler(req, res) {
 
   try {
     // Establecer el estado a "pending" en GitHub
-    await setGitHubStatus(repoName, repoName, commitSha, 'pending', 'Deployment in progress');
+    await setGitHubStatus(repoName, commitSha, 'pending', 'Deployment in progress');
 
     // Backup del package.json antes de actualizar
     if (fs.existsSync(packageJsonPath)) {
