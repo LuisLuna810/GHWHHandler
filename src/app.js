@@ -2,8 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const webhook_routes = require("./routes/webhook.routes.js");
-const pm2_routes = require("./routes/pm2.routes.js");
+const routes = require('./routes/index.js');
 
 const { CORS_DOMAIN, DASHBOARD_DOMAIN } = process.env;
 const server = express();
@@ -17,7 +16,7 @@ server.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 server.use(bodyParser.json({ limit: "50mb" }));
 server.use(morgan("dev"));
 
-server.use("/", webhook_routes, pm2_routes );
+server.use("/", routes);
 
 server.use((err, req, res, next) => {
   const status = err.status || 500;
