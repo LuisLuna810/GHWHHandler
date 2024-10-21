@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
-import { Octokit } from "octokit";
+import { Octokit } from "@octokit/rest";
 import fs from 'fs';
 import path from 'path';
 import simpleGit from 'simple-git';
