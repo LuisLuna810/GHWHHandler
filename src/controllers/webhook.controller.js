@@ -17,8 +17,12 @@ async function setGitHubStatus(repoName, sha, state, description) {
       repo: repoName,
       sha: sha,
       state: state,
+      target_url: `${BACK_DOMAIN}/pm2/process/${repoName}`,
       description: description,
-      context: "deployment"
+      context: "deployment",
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
     });
   } catch (error) {
     console.error('Error setting GitHub status:', error);
