@@ -46,6 +46,9 @@ Este repositorio contiene un servicio de webhook diseñado para integrarse con G
 3. Configura las variables de entorno necesarias en un archivo .env:
    ```bash
    REPOSITORIOS=/path/to/your/repositories
+   GITHUB_TOKEN=your_personal_access_token
+   REPO_OWNER=your-github-username
+   BACK_DOMAIN=your-server-domain
 
 
 ### Uso
