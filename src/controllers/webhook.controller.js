@@ -1,37 +1,15 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
-
-import { Octokit } from "@octokit/core";
 import fs from 'fs';
 import path from 'path';
 import simpleGit from 'simple-git';
 import { exec } from 'child_process';
 
-const { REPOSITORIOS, GITHUB_TOKEN, REPO_OWNER, BACK_DOMAIN } = process.env;
-const octokit = new Octokit({ auth: GITHUB_TOKEN });
-async function setGitHubStatus(repoName, sha, state, description) {
-  try {
-    await octokit.request('POST /repos/{owner}/{repo}/statuses/{sha}',{
-      owner: REPO_OWNER,
-      repo: repoName,
-      sha: sha,
-      state: state,
-      target_url: `${BACK_DOMAIN}/pm2/process/${repoName}`,
-      description: description,
-      context: "deployment",
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
-    });
-  } catch (error) {
-    console.error('Error setting GitHub status:', error);
-  }
-}
+const { REPOSITORIOS } = process.env;
+
 
 async function webHookHandler(req, res) {
   const repoName = req.body.repository.name;
-  const commitSha = req.body.after;
-  console.log(repoName);
   const localRepoPath = path.join(REPOSITORIOS, repoName);
 
   if (!fs.existsSync(localRepoPath)) {
@@ -44,9 +22,6 @@ async function webHookHandler(req, res) {
   const tempPackageJsonPath = path.join(localRepoPath, 'package.temp.json');
 
   try {
-    // Establecer el estado a "pending" en GitHub
-    await setGitHubStatus(repoName, commitSha, 'pending', 'Deployment in progress');
-
     // Backup del package.json antes de actualizar
     if (fs.existsSync(packageJsonPath)) {
       fs.copyFileSync(packageJsonPath, tempPackageJsonPath);
@@ -66,7 +41,6 @@ async function webHookHandler(req, res) {
         exec('npm install', { cwd: localRepoPath }, async (error, stdout, stderr) => {
           if (error) {
             console.error(`Error installing dependencies: ${error.message}`);
-            await setGitHubStatus(repoName, commitSha, 'failure', `Dependency installation failed. More details:${BACK_DOMAIN}/pm2/process/${repoName}`);
             return res.status(500).send('Error installing dependencies');
           }
           console.log(`Dependencies updated:\n${stdout}`);
@@ -76,7 +50,6 @@ async function webHookHandler(req, res) {
           exec('npm run build', { cwd: localRepoPath }, async (buildError, buildStdout, buildStderr) => {
             if (buildError) {
               console.error(`Build failed: ${buildError.message}`);
-              await setGitHubStatus(repoName, commitSha, 'failure', `Build failed. More details:${BACK_DOMAIN}/pm2/process/${repoName}`);
               return res.status(500).send('Build failed');
             }
             console.log(`Build completed:\n${buildStdout}`);
@@ -86,14 +59,11 @@ async function webHookHandler(req, res) {
             exec(`pm2 reload ${repoName}`, async (pm2Error, pm2Stdout, pm2Stderr) => {
               if (pm2Error) {
                 console.error(`PM2 reload failed: ${pm2Error.message}`);
-                await setGitHubStatus(repoName, commitSha, 'failure', `PM2 reload failed. More details:${BACK_DOMAIN}/pm2/process/${repoName}`);
                 return res.status(500).send('PM2 reload failed');
               }
               console.log(`PM2 reloaded successfully:\n${pm2Stdout}`);
               console.error(`PM2 stderr:\n${pm2Stderr}`);
               
-              // Establecer el estado a "success" en GitHub
-              await setGitHubStatus(repoName, commitSha, 'success', 'Deployment succeeded');
               res.status(200).send('Updated, built, and reloaded successfully');
             });
           });
@@ -103,25 +73,20 @@ async function webHookHandler(req, res) {
         exec(`pm2 reload ${repoName}`, async (pm2Error, pm2Stdout, pm2Stderr) => {
           if (pm2Error) {
             console.error(`PM2 reload failed: ${pm2Error.message}`);
-            await setGitHubStatus(repoName, commitSha, 'failure', `PM2 reload failed. More details:${BACK_DOMAIN}/pm2/process/${repoName}`);
             return res.status(500).send('PM2 reload failed');
           }
           console.log(`PM2 reloaded successfully:\n${pm2Stdout}`);
           console.error(`PM2 stderr:\n${pm2Stderr}`);
           
-          // Establecer el estado a "success" en GitHub
-          await setGitHubStatus(repoName, commitSha, 'success', 'Deployment succeeded');
           res.status(200).send('Updated and reloaded successfully');
         });
       }
       fs.unlinkSync(tempPackageJsonPath);
     } else {
-      await setGitHubStatus(repoName, commitSha, 'success', 'Deployment succeeded');
       res.status(200).send('Updated successfully');
     }
   } catch (err) {
     console.error('Error updating repository:', err);
-    await setGitHubStatus(repoName, commitSha, 'failure', `Internal Server Error. More details: ${BACK_DOMAIN}/pm2/process/${repoName}`);
     res.status(500).send('Internal Server Error');
   }
 }
